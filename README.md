@@ -1,2 +1,2 @@
 # FileCompressor
-A File Compressor based on huffman coding in C++
+A File Compressor based on huffman coding in C++.
