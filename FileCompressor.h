@@ -42,7 +42,7 @@ class FileCompressor
 
 	Node* Ascii_array[128];
 	Node* root;
-	priority_queue<Node*, vector<Node*>, Comp> pq;					//lowest frequency will be at top,pq to store frequencies
+	priority_queue<Node*, vector<Node*>, Comp> pq;		//lowest frequency will be at top,pq to store frequencies
 
 	char SearchCode(string s)
 	{
@@ -58,8 +58,9 @@ class FileCompressor
 	char BitSetTochar(bitset<8> b)
 	{
 		char c;
-		int ret = b.to_ullong();
-		c = char(ret);									//pack 8 bits into a single character and print it in a file to reduce size instead of printing 8 ascii bytes
+		int ret = b.to_ullong();							
+		c = char(ret);									
+		//pack 8 bits into a single character and print it in a file to reduce size instead of printing 8 ascii bytes
 		return c;
 	}
 
@@ -72,7 +73,8 @@ class FileCompressor
 			temp += ('0' + in % 2);
 			in /= 2;
 		}
-		result.append(8 - temp.size(), '0');													//append '0' ahead to let the result become fixed length of 8
+		result.append(8 - temp.size(), '0');													
+		//append '0' ahead to let the result become fixed length of 8
 		for (int i = temp.size() - 1; i >= 0; i--)
 		{
 			result += temp[i];
@@ -148,10 +150,10 @@ public:
 
 	void BuildTree()
 	{
-		priority_queue <Node*, vector<Node*>, Comp> tree(pq);									
+		priority_queue <Node*, vector<Node*>, Comp> tree(pq);				//BuildTree containing sum of all internal nodes as root
 		while (tree.size() > 1)
 		{
-			auto min1 = tree.top();																//BuildTree containing sum of all internal nodes as root
+			auto min1 = tree.top();															
 			tree.pop();
 			auto min2 = tree.top();
 			tree.pop();
@@ -182,7 +184,7 @@ public:
 	void WriteCode()
 	{
 		ifstream fin("OriginalFile.txt");
-		ofstream fout("Encoded.txt", ios::binary);					//read in binary mode
+		ofstream fout("Encoded.txt", ios::binary);	//read in binary mode(removing this messes up encoding)
 
 		bitset<8> Set;												
 		int k = 7;
@@ -193,21 +195,23 @@ public:
 			char input = fin.get();
 			if (fin.eof())
 				break;
-			s = s + Ascii_array[input]->code;								//store all code in a single string
+			s = s + Ascii_array[input]->code;	//store all code in a single string
 		}
 
 		while (s.size() % 8 != 0)
 		{
-			s = s + '0';																//make the string a multiple of 8 bit
+			s = s + '0';				//make the string a multiple of 8 bit		
+
 		}
 
 		for (int i = 0; i < s.size(); i++)
 		{
-			Set.set(k, (int)s[i] - 48);											//Set the value in reverse for ulong
+			Set.set(k, (int)s[i] - 48);											
+			//Set the value in reverse as ulong converts correct when the bitset is stored in reverse
 			k--;
 			if (k < 0)
 			{
-				k = 7;															//reset index
+				k = 7;				  //reset index
 				fout << BitSetTochar(Set);
 			}
 		}
@@ -220,20 +224,20 @@ public:
 
 	void Decode()
 	{
-		ifstream fin("Encoded.txt", ios::binary);				//read in binary mode
+		ifstream fin("Encoded.txt", ios::binary);		//read in binary mode(removing this messes up encoding)
 		string s = "";
 		int input;
 
 		while (true)
 		{
-			input = fin.get();										//read ascii value
+			input = fin.get();				//read ascii value
 			if (fin.eof())
 				break;
-			s += decimal_to_binary(input);							//decode the binary value in a string
+			s += decimal_to_binary(input);			//decode the binary value in a string
 		}
 
 		//cout << endl << endl << s;
-		Traverse_Tree(s);								//decode the binary values
+		Traverse_Tree(s);					//decode the binary values
 	}
 
 	void Compress()
